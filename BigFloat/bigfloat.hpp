@@ -2,52 +2,26 @@
 #define PROJECTCPP_BIGFLOAT_HPP
 
 #include <string>
-#include <sstream>
+
 
 
 class BigFloat {
 private:
-    std::size_t dot_pos;
-    std::size_t size;
-
-public:
+    std::size_t power;
     std::string number;
 
-    explicit BigFloat(std::string number) {
-        this->number = std::move(number);
-        this->size = this->number.size();
+public:
 
-        bool found = false;
-        int i = 0;
-        for (; i < this->size && !found; ++i) {
-            found = this->number[i] == '.';
-        }
+    std::string str();
 
-        if (found) this->dot_pos = i;
-        else {
-            this->dot_pos = this->size;
-            this->number += ".0";
-        }
-    }
+    BigFloat();
+    explicit BigFloat(std::string);
 
-    explicit BigFloat(int number) {
-        std::stringstream ss; ss << number;
-        this->number = ss.str();
-        this->size = this->number.size();
-
-        bool found = false;
-        int i = 0;
-        for (; i < this->size && !found; ++i) {
-            found = this->number[i] == '.';
-        }
-
-        if (found) this->dot_pos = i;
-        else {
-            this->dot_pos = this->size;
-            this->number += ".0";
-        }
-    }
+    explicit BigFloat(int);
+    explicit BigFloat(float);
+    explicit BigFloat(double);
 };
 
 
-#endif //PROJECTCPP_BIGFLOAT_HPP
+
+#endif // PROJECTCPP_BIGFLOAT_HPP

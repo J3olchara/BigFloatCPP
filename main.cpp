@@ -4,6 +4,7 @@
 
 
 int main() {
-    std::cout << i++;
+    BigFloat num;
+    std::cout << num.str();
     return 0;
 }

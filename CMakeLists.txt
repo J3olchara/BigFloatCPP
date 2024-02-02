@@ -3,9 +3,13 @@ project(projectcpp)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include(CTest)
+enable_testing()
+
 
 add_executable(
-        projectcpp main.cpp
+        ${PROJECT_NAME} main.cpp
         BigFloat/bigfloat.cpp
         BigFloat/bigfloat.hpp
 )
+
