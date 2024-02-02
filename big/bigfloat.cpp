@@ -3,8 +3,6 @@
 #include <iostream>
 
 
-
-
 std::string BigFloat::str() {
     std::string answer = this->number;
     size_t s_size = this->number.size() + 1;
@@ -45,10 +43,10 @@ BigFloat::BigFloat(std::string number) {
 
         if (dot_pos >= size) {size++;}
         this->power = size - right_zeros_float - dot_pos - 1;
+        if (this->number.empty()) {new (this)BigFloat();}
     } else {
         new (this)BigFloat();
     }
-    std::cout << this->power << ' ' << this->number << std::endl;
 
 }
 

@@ -6,11 +6,9 @@
 
 
 class BigFloat {
-private:
+public:
     std::size_t power;
     std::string number;
-
-public:
 
     std::string str();
 
