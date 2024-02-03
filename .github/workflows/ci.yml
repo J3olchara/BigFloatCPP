@@ -20,15 +20,16 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        build_type: [Debug]
         include:
           - os: windows-latest
-            cpp_compiler: cl
+            cpp_compiler: g++
+            build_type: Debug
           - os: macos-latest
             cpp_compiler: g++
+            build_type: Debug
           - os: ubuntu-latest
             cpp_compiler: clang++
+            build_type: Debug
 
     steps:
     - uses: actions/checkout@v3
