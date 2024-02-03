@@ -129,5 +129,6 @@ BigFloat BigFloat::operator+(BigFloat &b) {
     return answer;
 }
 BigFloat BigFloat::operator-(BigFloat &b) {
+    // todo: write this
     return *this;
 }
