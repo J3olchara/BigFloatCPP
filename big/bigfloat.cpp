@@ -1,6 +1,7 @@
 #include <string>
 #include "bigfloat.hpp"
-#include <iostream>
+#include <iterator>
+#include <algorithm>
 #include <sstream>
 
 
