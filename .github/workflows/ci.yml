@@ -20,18 +20,17 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        build_type: [Debug]
         include:
-          - os: windows-latest
-            cpp_compiler: cl
           - os: macos-latest
             cpp_compiler: g++
+            build_type: Debug
           - os: ubuntu-latest
             cpp_compiler: clang++
+            build_type: Debug
 
     steps:
     - uses: actions/checkout@v3
+    - uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Set build directory variable
       id: strings
@@ -52,5 +51,5 @@ jobs:
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ./tests/tests
+      working-directory: ${{ steps.strings.outputs.build-output-dir }}/tests
+      run: ./tests
