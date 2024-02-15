@@ -3,18 +3,18 @@
 #include <string>
 
 
-class BigFloatStringConstructorParametersTests : public ::testing::TestWithParam<std::tuple<
+class BigFloatConstructorsTests : public ::testing::TestWithParam<std::tuple<
     std::string,
     std::string
     >> {
 };
 
-TEST(BigFloatConstructorTests, NullConstructorTest) {
+TEST(BigFloatConstructorsTests, ZeroTest) {
     BigFloat num;
     ASSERT_EQ(num.str(), "0.0");
 }
 
-TEST_P(BigFloatStringConstructorParametersTests, TestConstructor) {
+TEST_P(BigFloatConstructorsTests, TestConstructorString) {
     std::string expected = std::get<1>(GetParam());
     std::string number = std::get<0>(GetParam());
 
@@ -27,8 +27,8 @@ TEST_P(BigFloatStringConstructorParametersTests, TestConstructor) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    TestConstructor,
-    BigFloatStringConstructorParametersTests,
+    TestConstructorString,
+    BigFloatConstructorsTests,
     ::testing::Values(
         std::make_tuple("", "0.0"),
         std::make_tuple(".", "0.0"),
@@ -51,14 +51,14 @@ INSTANTIATE_TEST_SUITE_P(
 );
 
 
-class BigFloatPlusOperatorParametersTests : public ::testing::TestWithParam<std::tuple<
+class PlusTests : public ::testing::TestWithParam<std::tuple<
     std::string,
     std::string,
     std::string
     >> {
 };
 
-TEST_P(BigFloatPlusOperatorParametersTests, TestPlus) {
+TEST_P(PlusTests, Tests) {
     BigFloat a(std::get<0>(GetParam()));
     BigFloat b(std::get<1>(GetParam()));
     BigFloat expected(std::get<2>(GetParam()));
@@ -71,8 +71,8 @@ TEST_P(BigFloatPlusOperatorParametersTests, TestPlus) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    TestPlus,
-    BigFloatPlusOperatorParametersTests,
+    Default,
+    PlusTests,
     ::testing::Values(
         std::make_tuple("0.0", "0.0", "0.0"),
         std::make_tuple("12345.0", "0.0", "12345.0"),
@@ -87,16 +87,14 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
-
-class BigFloatMinusOperatorParametersTests : public ::testing::TestWithParam<std::tuple<
+class MinusTests : public ::testing::TestWithParam<std::tuple<
     std::string,
     std::string,
     std::string
-    >> {
+>> {
 };
 
-
-TEST_P(BigFloatMinusOperatorParametersTests, TestMinus) {
+TEST_P(MinusTests, Default) {
     BigFloat a(std::get<0>(GetParam()));
     BigFloat b(std::get<1>(GetParam()));
     BigFloat expected(std::get<2>(GetParam()));
@@ -109,8 +107,8 @@ TEST_P(BigFloatMinusOperatorParametersTests, TestMinus) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    TestPlus,
-    BigFloatMinusOperatorParametersTests,
+    Default,
+    MinusTests,
     ::testing::Values(
         std::make_tuple("0.0", "0.0", "0.0"),
         std::make_tuple("1", "0", "1.0"),
@@ -119,10 +117,10 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple("10.12345", "10.12345", "0.0"),
         std::make_tuple("0.0", "10.123", "-10.123"),
         std::make_tuple("10.123456", "20.123457", "-9.999999")
-        )
+    )
 );
 
-class ArraysOperationsTests : public ::testing::TestWithParam<std::tuple<
+class ArraysLeftSumTests : public ::testing::TestWithParam<std::tuple<
     std::vector<int>,
     std::vector<int>,
     std::vector<int>,
@@ -130,7 +128,7 @@ class ArraysOperationsTests : public ::testing::TestWithParam<std::tuple<
     >> {};
 
 
-TEST_P(ArraysOperationsTests, LeftSumTest) {
+TEST_P(ArraysLeftSumTests, LeftSumTest) {
     std::vector<int> a = std::get<0>(GetParam());
     std::vector<int> b = std::get<1>(GetParam());
     std::vector<int> expected = std::get<2>(GetParam());
@@ -145,48 +143,67 @@ TEST_P(ArraysOperationsTests, LeftSumTest) {
 
 INSTANTIATE_TEST_SUITE_P(
     LeftSumTest,
-    ArraysOperationsTests,
+    ArraysLeftSumTests,
     ::testing::Values(
         std::make_tuple(
             std::vector<int>{1, 2, 3, 4},
             std::vector<int>{1, 2},
             std::vector<int>{2, 4, 3, 4},
             0
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{1, 2},
             std::vector<int>{1, 2, 3, 4},
             std::vector<int>{2, 4, 3, 4},
             0
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{1, 2, 3, 4},
             std::vector<int>{1, 2, 3, 4},
             std::vector<int>{2, 4, 6, 8},
             0
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{1, 2, 3, 4, 5},
             std::vector<int>{1, 2, 3, 4, 5},
             std::vector<int>{2, 4, 6, 9, 0},
             0
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{9, 9, 9, 9, 9},
             std::vector<int>{9, 9, 9, 9, 9},
             std::vector<int>{9, 9, 9, 9, 8},
             1
-            ),
+        ),
+        std::make_tuple(
+            std::vector<int>{9},
+            std::vector<int>{1, 2, 3, 4},
+            std::vector<int>{0, 2, 3, 4},
+            1
+        ),
+        std::make_tuple(
+            std::vector<int>{1, 2, 3, 4, 5},
+            std::vector<int>{0},
+            std::vector<int>{1, 2, 3, 4, 5},
+            0
+        ),
         std::make_tuple(
             std::vector<int>{5},
             std::vector<int>{5},
             std::vector<int>{0},
             1
-            )
         )
+    )
 );
 
-TEST_P(ArraysOperationsTests, RightSumTests) {
+class ArraysRightSumTests : public ::testing::TestWithParam<std::tuple<
+    std::vector<int>,
+    std::vector<int>,
+    std::vector<int>,
+    int
+>> {};
+
+TEST_P(ArraysRightSumTests, RightSumTests) {
     std::vector<int> a = std::get<0>(GetParam());
     std::vector<int> b = std::get<1>(GetParam());
     std::vector<int> expected = std::get<2>(GetParam());
@@ -200,50 +217,56 @@ TEST_P(ArraysOperationsTests, RightSumTests) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    RightSumTests,
-    ArraysOperationsTests,
+    Default,
+    ArraysRightSumTests,
     ::testing::Values(
         std::make_tuple(
             std::vector<int>{1, 2, 3, 4},
             std::vector<int>{1, 2},
-            std::vector<int>{1, 2, 4, 5},
+            std::vector<int>{1, 2, 4, 6},
             0
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{1, 2},
             std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2, 5, 6},
+            std::vector<int>{1, 2, 4, 6},
             0
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{1, 2, 3, 4},
             std::vector<int>{1, 2, 3, 4},
             std::vector<int>{2, 4, 6, 8},
             0
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{1, 2, 3, 4, 5},
             std::vector<int>{1, 2, 3, 4, 5},
             std::vector<int>{2, 4, 6, 9, 0},
             0
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{9, 9, 9, 9, 9},
             std::vector<int>{9, 9, 9, 9, 9},
             std::vector<int>{9, 9, 9, 9, 8},
             1
-            ),
+        ),
         std::make_tuple(
             std::vector<int>{5},
             std::vector<int>{5},
             std::vector<int>{0},
             1
-            )
         )
+    )
 );
 
+class ArraysLeftSubTests : public ::testing::TestWithParam<std::tuple<
+    std::vector<int>,
+    std::vector<int>,
+    std::vector<int>,
+    int
+>> {};
 
-TEST_P(ArraysOperationsTests, LeftSubTest) {
+TEST_P(ArraysLeftSubTests, LeftSubTest) {
     std::vector<int> a = std::get<0>(GetParam());
     std::vector<int> b = std::get<1>(GetParam());
     std::vector<int> expected = std::get<2>(GetParam());
@@ -257,8 +280,8 @@ TEST_P(ArraysOperationsTests, LeftSubTest) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    LeftSubTest,
-    ArraysOperationsTests,
+    Default,
+    ArraysLeftSubTests,
     ::testing::Values(
         std::make_tuple(
             std::vector<int>{1, 2, 3, 4},
@@ -299,7 +322,14 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
-TEST_P(ArraysOperationsTests, RightSubTest) {
+class ArraysRightSubTests : public ::testing::TestWithParam<std::tuple<
+    std::vector<int>,
+    std::vector<int>,
+    std::vector<int>,
+    int
+>> {};
+
+TEST_P(ArraysRightSubTests, RightSubTest) {
     std::vector<int> a = std::get<0>(GetParam());
     std::vector<int> b = std::get<1>(GetParam());
     std::vector<int> expected = std::get<2>(GetParam());
@@ -313,8 +343,8 @@ TEST_P(ArraysOperationsTests, RightSubTest) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    RightSubTest,
-    ArraysOperationsTests,
+    Default,
+    ArraysRightSubTests,
     ::testing::Values(
         std::make_tuple(
             std::vector<int>{1, 2, 3, 4},

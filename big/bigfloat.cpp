@@ -19,16 +19,21 @@ int BigFloat::sum_arrays_left(
     const std::vector<int>::iterator end2,
     std::vector<int> &buff,
     int additive,
+    bool left,
     bool reverse
 ) {
+//    if (not left) {
+//        std::reverse(start1, end1);
+//        std::reverse(start2, end2);
+//    }
     int size1 = static_cast<int>(end1 - start1);
     int size2 = static_cast<int>(end2 - start2);
     int diff = size1 - size2;
 
     if (diff < 0)
-        for (auto it = end2 - 1; it >= end2 + diff; --it) {buff.push_back(*it);
-    } else
-        for (auto it = end1 - 1; it >= end1 - diff; --it) {buff.push_back(*it);}
+        return sum_arrays_left(start2, end2, start1, end1, buff, additive, reverse);
+
+    for (auto it = end1 - 1; it >= end1 - diff; --it) {buff.push_back(*it);}
     for (int i = std::max(size1, size2) - abs(diff) - 1; i >= 0; --i) {
         int sum = *(start1 + i) + *(start2 + i) + additive;
         additive = sum / 10;
@@ -53,20 +58,18 @@ int BigFloat::sum_arrays_right(
     int size2 = static_cast<int>(end2 - start2);
     int diff = size1 - size2;
 
-    if (diff < 0) {
-        for (int i = size2 - 1; i >= abs(diff); --i) { // 12 1234 1245
-            int sum = *(start1 + i) + *(start2 + i - abs(diff)) + additive;
-            additive = sum / 10;
-            buff.push_back(sum % 10);
-        }
-        for (auto it = start1 + abs(diff) - 1; it >= start1; ++it) { buff.push_back(*it + additive); }
-    } else {
-        for (int i = size1 - 1; i >= abs(diff); --i) { // 1234 12 1245
-            int sum = *(start2 + i) + *(start1 + i - abs(diff)) + additive;
-            additive = sum / 10;
-            buff.push_back(sum % 10);
-        }
-        for (auto it = start2 + abs(diff) - 1; it >= start2; ++it) { buff.push_back(*it + additive); }
+    if (diff < 0)
+        return sum_arrays_right(start2, end2, start1, end1, buff, additive, reverse);
+
+    for (int i = size1 - 1; i >= diff; --i) {
+        int sum = *(start1 + i) + *(start2 + i - diff) + additive;
+        additive = sum / 10;
+        buff.push_back(sum % 10);
+    }
+    for (auto it = start1 + diff - 1; it >= start1; --it) {
+        int sum = *it + additive;
+        additive = sum / 10;
+        buff.push_back(sum % 10);
     }
 
     if (reverse)
@@ -195,19 +198,17 @@ BigFloat BigFloat::operator+(BigFloat &b) {
     std::vector<int> float_part;
     std::vector<int> real_part;
     additive = BigFloat::sum_arrays_left(
-        this->number.end() - static_cast<int>(this->power) - 1, this->number.end(),
-        b.number.end() - static_cast<int>(b.power) - 1, b.number.end(),
-        float_part
-        );
+        this->number.end() - this->power , this->number.end(),
+        b.number.end() - b.power, b.number.end(),
+        float_part);
     additive = BigFloat::sum_arrays_right(
-        this->number.begin(), this->number.end() - static_cast<int>(this->power),
-        b.number.begin(), b.number.end() - static_cast<int>(b.power),
-        real_part, additive, false
-    );
+        this->number.begin(), this->number.end() - this->power,
+        b.number.begin(), b.number.end() - b.power,
+        real_part, additive, false);
     if (additive != 0) real_part.push_back(additive);
     std::reverse(real_part.begin(), real_part.end());
 
-    return BigFloat(real_part, float_part);
+    return {real_part, float_part};
 }
 
 
