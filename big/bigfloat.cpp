@@ -1,8 +1,8 @@
 #include <string>
 #include "bigfloat.hpp"
 #include <iterator>
-#include <algorithm>
 #include <sstream>
+#include <unordered_map>
 
 
 inline std::string BigFloat::raw_number() {
@@ -93,6 +93,7 @@ BigFloat BigFloat::operator-() {
     this->minus = not this->minus;
     return *this;
 }
+
 BigFloat BigFloat::operator+() {
     return *this;
 }
@@ -102,10 +103,14 @@ BigFloat BigFloat::operator+(BigFloat &b) {
     if (    this->minus and not b.minus ) return b - *this;
     if (    this->minus and     b.minus ) return -(*this + b);
     if (*this < b) return b + *this;
-    // then *this - b and *this > b
+    // then *this + b and *this > b
 
     int additive = 0;
     std::vector<int> new_num(0);
+    int float_point_diff = this->power - b.power;
+    for (int i = static_cast<int>(b.number.size()) - 1; i >= b.number.size() + float_point_diff; --i) {
+        new_num.push_back(b.number[i]);
+    }
     for (int i = static_cast<int>(this->number.size()) - 1; i >= 0; --i) {
         int sum = this->number[i] + b.get_num(i, *this) + additive;
         additive = sum / 10;
@@ -148,7 +153,53 @@ BigFloat BigFloat::operator-(BigFloat &b) {
     return BigFloat(ans.str());
 }
 
+BigFloat BigFloat::operator*(BigFloat &b) {
+    if (*this < b) return b * *this;
+    // then *this * b and *this > b
 
+    std::vector<BigFloat> dp(10, BigFloat(-1));
+    dp[0] = BigFloat(0);
+    BigFloat ans;
+    int size1 = static_cast<int>(this->number.size());
+    int max_size = size1 - static_cast<int>(this->power) + static_cast<int>(std::max(this->power, b.power));
+    for (int i = max_size - 1; i >= 0; --i) {
+        int n = b.get_num(i, *this);
+        BigFloat sum(0);
+        if (BigFloat(-1) != dp[n]) {
+            sum = dp[n];
+        } else {
+            int tmp = n;
+            while (n > 0) {
+                sum += *this;
+                n -= 1;
+            }
+            dp[tmp] = sum;
+        }
+        for (int j = 0; j < max_size - i - 1; ++j) sum.number.push_back(0);
+        sum = BigFloat(sum.str());
+        ans += sum;
+    }
+    ans.power = this->power + b.power;
+    ans.minus = this->minus ^ b.minus;
+    ans = BigFloat(ans.str());
+
+    return ans;
+}
+
+BigFloat BigFloat::operator+=(BigFloat& b) {
+    *this = *this + b;
+    return *this;
+}
+
+BigFloat BigFloat::operator-=(BigFloat& b) {
+    *this = *this - b;
+    return *this;
+}
+
+BigFloat BigFloat::operator*=(BigFloat& b) {
+    *this = *this * b;
+    return *this;
+}
 
 bool BigFloat::operator<(BigFloat& b) {
     return b > *this;
@@ -180,10 +231,15 @@ bool BigFloat::operator>(BigFloat& b) {
     if (i < this->number.size() && i < b.number.size()) return this->number[i] > b.number[i];
     if (this->number.size() > b.number.size())          return true;
     if (this->number.size() < b.number.size())          return false;
+    return false;
 }
 
 bool BigFloat::operator==(BigFloat& b) {
     return !(*this > b && b > *this);
+}
+
+bool BigFloat::operator!=(BigFloat& b) {
+    return not (*this == b);
 }
 
 std::ostream& operator<<(std::ostream& os, BigFloat& num) {

@@ -79,6 +79,7 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple("12345.0", "0.0", "12345.0"),
         std::make_tuple("0.0", "54321.0", "54321.0"),
         std::make_tuple("12345.0", "54321.0", "66666.0"),
+        std::make_tuple("100.12", "100120.0", "100220.12"),
         std::make_tuple("555555.0", "555555.0", "1111110.0"),
         std::make_tuple("999999.999", "999999.999", "1999999.998"),
         std::make_tuple("10.123456789", "5.12", "15.243456789"),
@@ -124,6 +125,41 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
+class MultipleTests : public ::testing::TestWithParam<std::tuple<
+    std::string,
+    std::string,
+    std::string
+>> {
+};
+
+TEST_P(MultipleTests, Default) {
+    BigFloat a(std::get<0>(GetParam()));
+    BigFloat b(std::get<1>(GetParam()));
+    BigFloat expected(std::get<2>(GetParam()));
+    BigFloat real = a * b;
+
+    std::stringstream bad_message;
+    bad_message << a.str() << " * " << b.str() << " = " << real.str() << " computed incorrectly\n"
+                << "correct answer is: " << expected.str() << ' ' << real.raw_number();
+    EXPECT_EQ(real.str(), expected.str()) << bad_message.str();
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    Default,
+    MultipleTests,
+    ::testing::Values(
+        std::make_tuple("0", "0", "0"),
+        std::make_tuple("999999999999", "0", "0"),
+        std::make_tuple("1000", "1000", "1000000"),
+        std::make_tuple("100.12345", "100.12345", "10024.7052399025"),
+        std::make_tuple("100.12", "100.1", "10022.012"),
+        std::make_tuple("0.12345", "100000", "12345"),
+        std::make_tuple("0.12345", "1000000", "123450")
+    )
+);
+
+
+
 class GtTests : public ::testing::TestWithParam<std::tuple<
     BigFloat,
     BigFloat,
@@ -151,7 +187,8 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple(BigFloat("-1234"), BigFloat("-123"), false),
         std::make_tuple(BigFloat("12345.12"), BigFloat("12345.1200001"), false),
         std::make_tuple(BigFloat("12345.12"), BigFloat("12345.121"), false),
-        std::make_tuple(BigFloat("12345.0"), BigFloat("54321.0"), false),
+        std::make_tuple(BigFloat("12345"), BigFloat("54321"), false),
+        std::make_tuple(BigFloat("11111"), BigFloat("11121"), false),
         std::make_tuple(BigFloat("1"), BigFloat("0"), true),
         std::make_tuple(BigFloat("0"), BigFloat("-9999"), true),
         std::make_tuple(BigFloat("-1"), BigFloat("-9999"), true),
