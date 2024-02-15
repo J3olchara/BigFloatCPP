@@ -12,107 +12,16 @@ inline std::string BigFloat::raw_number() {
     return ss.str();
 }
 
-int BigFloat::sum_arrays_left(
-    const std::vector<int>::iterator start1,
-    const std::vector<int>::iterator end1,
-    const std::vector<int>::iterator start2,
-    const std::vector<int>::iterator end2,
-    std::vector<int> &buff,
-    int additive,
-    bool left,
-    bool reverse
-) {
-//    if (not left) {
-//        std::reverse(start1, end1);
-//        std::reverse(start2, end2);
-//    }
-    int size1 = static_cast<int>(end1 - start1);
-    int size2 = static_cast<int>(end2 - start2);
-    int diff = size1 - size2;
-
-    if (diff < 0)
-        return sum_arrays_left(start2, end2, start1, end1, buff, additive, reverse);
-
-    for (auto it = end1 - 1; it >= end1 - diff; --it) {buff.push_back(*it);}
-    for (int i = std::max(size1, size2) - abs(diff) - 1; i >= 0; --i) {
-        int sum = *(start1 + i) + *(start2 + i) + additive;
-        additive = sum / 10;
-        buff.push_back(sum % 10);
-    }
-
-    if (reverse)
-        std::reverse(buff.begin(), buff.end());
-    return additive;
-}
-
-int BigFloat::sum_arrays_right(
-    const std::vector<int>::iterator start1,
-    const std::vector<int>::iterator end1,
-    const std::vector<int>::iterator start2,
-    const std::vector<int>::iterator end2,
-    std::vector<int> &buff,
-    int additive,
-    bool reverse
-) {
-    int size1 = static_cast<int>(end1 - start1);
-    int size2 = static_cast<int>(end2 - start2);
-    int diff = size1 - size2;
-
-    if (diff < 0)
-        return sum_arrays_right(start2, end2, start1, end1, buff, additive, reverse);
-
-    for (int i = size1 - 1; i >= diff; --i) {
-        int sum = *(start1 + i) + *(start2 + i - diff) + additive;
-        additive = sum / 10;
-        buff.push_back(sum % 10);
-    }
-    for (auto it = start1 + diff - 1; it >= start1; --it) {
-        int sum = *it + additive;
-        additive = sum / 10;
-        buff.push_back(sum % 10);
-    }
-
-    if (reverse)
-        std::reverse(buff.begin(), buff.end());
-    return additive;
+int BigFloat::get_num(int index, BigFloat& to_num) { // 12345.678 0.12
+    int real_part = static_cast<int>(this->number.size()) - static_cast<int>(this->power);
+    int real_part_to = static_cast<int>(to_num.number.size()) - static_cast<int>(to_num.power);
+    int idx = index - real_part_to + real_part;
+    if (idx < 0 or idx >= this->number.size()) return 0;
+    return this->number[idx];
 }
 
 
-int BigFloat::sub_arrays_left(
-    const std::vector<int>::iterator start1,
-    const std::vector<int>::iterator end1,
-    const std::vector<int>::iterator start2,
-    const std::vector<int>::iterator end2,
-    std::vector<int> &buff,
-    int additive,
-    bool reverse
-) {
-    int size1 = static_cast<int>(end1 - start1);
-    int size2 = static_cast<int>(end2 - start2);
-    int diff = size1 - size2;
-
-    if (diff < 0)
-        for (auto it = end2 - 1; it >= end2 + diff; --it) {
-            int sum = 0 - *it + additive;
-            buff.push_back(*it);
-        } else
-        for (auto it = end1 - 1; it >= end1 - diff; --it) {
-            buff.push_back(*it);
-        }
-    for (int i = std::max(size1, size2) - abs(diff) - 1; i >= 0; --i) {
-        int sum = *(start1 + i) - *(start2 + i) + additive;
-        additive = 0;
-        if (sum < 0) additive -= 1;
-        buff.push_back((sum % 10 + 10) % 10);
-    }
-
-    if (reverse)
-        std::reverse(buff.begin(), buff.end());
-    return additive;
-
-}
-
-std::string BigFloat::str() {
+std::string BigFloat::str()  {
     std::string answer = this->raw_number();
     size_t s_size = this->number.size() + 1;
     answer.push_back(answer[s_size - 2]);
@@ -190,49 +99,93 @@ BigFloat BigFloat::operator+() {
 }
 
 BigFloat BigFloat::operator+(BigFloat &b) {
-    if (not this->minus and b.minus) {return *this - b;}
-    if (this->minus and not b.minus) {return b - *this;}
-    if (this->minus and b.minus) {return -(*this + b);}
+    if (not this->minus and     b.minus ) return *this - b;
+    if (    this->minus and not b.minus ) return b - *this;
+    if (    this->minus and     b.minus ) return -(*this + b);
+    if (*this < b) return b + *this;
+    // then *this - b and *this > b
 
-    int additive;
-    std::vector<int> float_part;
-    std::vector<int> real_part;
-    additive = BigFloat::sum_arrays_left(
-        this->number.end() - this->power , this->number.end(),
-        b.number.end() - b.power, b.number.end(),
-        float_part);
-    additive = BigFloat::sum_arrays_right(
-        this->number.begin(), this->number.end() - this->power,
-        b.number.begin(), b.number.end() - b.power,
-        real_part, additive, false);
-    if (additive != 0) real_part.push_back(additive);
-    std::reverse(real_part.begin(), real_part.end());
+    int additive = 0;
+    std::vector<int> new_num(0);
+    for (int i = static_cast<int>(this->number.size()) - 1; i >= 0; --i) {
+        int sum = this->number[i] + b.get_num(i, *this) + additive;
+        additive = sum / 10;
+        new_num.push_back(sum % 10);
+    }
 
-    return {real_part, float_part};
+    if (additive != 0) new_num.push_back(additive);
+    std::reverse(new_num.begin(), new_num.end());
+    BigFloat ans;
+    ans.number = new_num;
+    ans.power = std::max(this->power, b.power);
+    ans.minus = this->minus;
+
+    return ans;
 }
-
 
 BigFloat BigFloat::operator-(BigFloat &b) {
-    if (not this->minus and b.minus) {return *this + b;}
-    if (this->minus and b.minus) {return b - *this;}
-    if (this->minus and not b.minus) {return -(*this + b);}
-    // then *this - b
+    if (not this->minus and     b.minus) {return *this + b;}
+    if (    this->minus and     b.minus) {return b - *this;}
+    if (    this->minus and not b.minus) {return -(*this + b);}
+    if (*this < b) return -(b - *this);
+    // then *this - b and *this > b
 
-    int additive;
-    std::vector<int> float_part;
-    std::vector<int> real_part;
-    additive = BigFloat::sub_arrays_left(
-        this->number.end() - static_cast<int>(this->power) - 1, this->number.end(),
-        b.number.end() - static_cast<int>(b.power) - 1, b.number.end(),
-        float_part
-    );
-    additive = BigFloat::sub_arrays_left(
-        this->number.begin(), this->number.end() - static_cast<int>(this->power),
-        b.number.begin(), b.number.end() - static_cast<int>(b.power),
-        real_part, additive, false
-    );
-    if (additive != 0) real_part.push_back(additive);
-    std::reverse(real_part.begin(), real_part.end());
+    std::vector<int> new_num;
+    int additive = 0;
+    for (int i = this->number.size() - 1; i >= 0; --i) {
+        int sum = this->number[i] - b.get_num(i, *this) + additive;
+        additive = 0;
+        if (sum < 0) additive = -1;
+        new_num.push_back(((sum % 10) + 10) % 10);
+    }
+    if (additive != 0) new_num.push_back(((additive % 10) + 10) % 10);
+    std::reverse(new_num.begin(), new_num.end());
 
-    return BigFloat(real_part, float_part);
+    BigFloat ans;
+    ans.number = new_num;
+    ans.power = std::max(this->power, b.power);
+    ans.minus = this->minus;
+
+    return BigFloat(ans.str());
 }
+
+bool BigFloat::operator<(BigFloat& b) {
+    return b > *this;
+}
+
+bool BigFloat::operator<=(BigFloat& b) {
+    return !(*this > b);
+}
+
+bool BigFloat::operator>=(BigFloat& b) {
+    return !(b > *this);
+}
+
+bool BigFloat::operator>(BigFloat& b) {
+    int real_size1 = static_cast<int>(this->number.size()) - static_cast<int>(this->power);
+    int real_size2 = static_cast<int>(b.number.size()) - static_cast<int>(b.power);
+    int real_size_diff = real_size1 - real_size2;
+    if (this->minus and !b.minus) return false;
+    if (!this->minus and b.minus) return true;
+    if (real_size_diff && !this->minus && !b.minus) {
+        return real_size_diff > 0;
+    } else if (real_size_diff && this->minus && b.minus) {
+        return real_size_diff < 0;
+    }
+
+    int i = 0;
+    while (i < this->number.size() && i < b.number.size() && this->number[i] == b.number[i]) i += 1;
+
+    if (i < this->number.size() && i < b.number.size()) return this->number[i] > b.number[i];
+    if (this->number.size() > b.number.size())          return true;
+    if (this->number.size() < b.number.size())          return false;
+}
+
+bool BigFloat::operator==(BigFloat& b) {
+    return !(*this > b && b > *this);
+}
+
+std::ostream& operator<<(std::ostream& os, BigFloat& num) {
+    return os << num.str();
+}
+

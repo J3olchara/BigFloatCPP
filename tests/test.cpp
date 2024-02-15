@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <big/bigfloat.hpp>
 #include <string>
+#include <iostream>
 
 
 class BigFloatConstructorsTests : public ::testing::TestWithParam<std::tuple<
@@ -116,272 +117,81 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple("10.123", "0.124", "9.999"),
         std::make_tuple("10.12345", "10.12345", "0.0"),
         std::make_tuple("0.0", "10.123", "-10.123"),
-        std::make_tuple("10.123456", "20.123457", "-9.999999")
+        std::make_tuple("10.123456", "20.123455", "-9.999999"),
+        std::make_tuple("10.123", "10.123456", "-0.000456"),
+        std::make_tuple("9999.999999", "999.999", "9000.000999"),
+        std::make_tuple("10.123456", "20.123455", "-9.999999")
     )
 );
 
-class ArraysLeftSumTests : public ::testing::TestWithParam<std::tuple<
-    std::vector<int>,
-    std::vector<int>,
-    std::vector<int>,
-    int
-    >> {};
+class GtTests : public ::testing::TestWithParam<std::tuple<
+    BigFloat,
+    BigFloat,
+    bool
+>> {
+};
 
+TEST_P(GtTests, Default) {
+    BigFloat a(std::get<0>(GetParam()));
+    BigFloat b(std::get<1>(GetParam()));
+    bool expected = std::get<2>(GetParam());
+    bool real = a > b;
 
-TEST_P(ArraysLeftSumTests, LeftSumTest) {
-    std::vector<int> a = std::get<0>(GetParam());
-    std::vector<int> b = std::get<1>(GetParam());
-    std::vector<int> expected = std::get<2>(GetParam());
-    int expected_additive = std::get<3>(GetParam());
-    std::vector<int> sum;
-    int additive = BigFloat::sum_arrays_left(a.begin(), a.end(), b.begin(), b.end(), sum);
+    EXPECT_EQ(real, expected) << a.str() << " > " << b.str() << " is not " << real << " " << a.raw_number() << ' ' << b.raw_number();
 
-
-    EXPECT_EQ(additive, expected_additive) << "incorrect additive " << additive << " correct is " << expected_additive;
-    EXPECT_EQ(sum, expected);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    LeftSumTest,
-    ArraysLeftSumTests,
-    ::testing::Values(
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2},
-            std::vector<int>{2, 4, 3, 4},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{2, 4, 3, 4},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{2, 4, 6, 8},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{2, 4, 6, 9, 0},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{9, 9, 9, 9, 9},
-            std::vector<int>{9, 9, 9, 9, 9},
-            std::vector<int>{9, 9, 9, 9, 8},
-            1
-        ),
-        std::make_tuple(
-            std::vector<int>{9},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{0, 2, 3, 4},
-            1
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{0},
-            std::vector<int>{1, 2, 3, 4, 5},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{5},
-            std::vector<int>{5},
-            std::vector<int>{0},
-            1
-        )
-    )
-);
-
-class ArraysRightSumTests : public ::testing::TestWithParam<std::tuple<
-    std::vector<int>,
-    std::vector<int>,
-    std::vector<int>,
-    int
->> {};
-
-TEST_P(ArraysRightSumTests, RightSumTests) {
-    std::vector<int> a = std::get<0>(GetParam());
-    std::vector<int> b = std::get<1>(GetParam());
-    std::vector<int> expected = std::get<2>(GetParam());
-    int expected_additive = std::get<3>(GetParam());
-    std::vector<int> sum;
-    int additive = BigFloat::sum_arrays_right(a.begin(), a.end(), b.begin(), b.end(), sum);
-
-
-    EXPECT_EQ(additive, expected_additive) << "incorrect additive " << additive << " correct is " << expected_additive;
-    EXPECT_EQ(sum, expected);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     Default,
-    ArraysRightSumTests,
+    GtTests,
     ::testing::Values(
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2},
-            std::vector<int>{1, 2, 4, 6},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2, 4, 6},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{2, 4, 6, 8},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{2, 4, 6, 9, 0},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{9, 9, 9, 9, 9},
-            std::vector<int>{9, 9, 9, 9, 9},
-            std::vector<int>{9, 9, 9, 9, 8},
-            1
-        ),
-        std::make_tuple(
-            std::vector<int>{5},
-            std::vector<int>{5},
-            std::vector<int>{0},
-            1
-        )
+        std::make_tuple(BigFloat("0"), BigFloat("0"), false),
+        std::make_tuple(BigFloat("-1"), BigFloat("10"), false),
+        std::make_tuple(BigFloat("-9999"), BigFloat("0"), false),
+        std::make_tuple(BigFloat("-1234"), BigFloat("-123"), false),
+        std::make_tuple(BigFloat("12345.12"), BigFloat("12345.1200001"), false),
+        std::make_tuple(BigFloat("12345.12"), BigFloat("12345.121"), false),
+        std::make_tuple(BigFloat("12345.0"), BigFloat("54321.0"), false),
+        std::make_tuple(BigFloat("1"), BigFloat("0"), true),
+        std::make_tuple(BigFloat("0"), BigFloat("-9999"), true),
+        std::make_tuple(BigFloat("-1"), BigFloat("-9999"), true),
+        std::make_tuple(BigFloat("-1"), BigFloat("-123.123456789"), true),
+        std::make_tuple(BigFloat("-1234.56789"), BigFloat("-1234.5678"), true),
+        std::make_tuple(BigFloat("-1234.56789"), BigFloat("-1234.56788"), true),
+        std::make_tuple(BigFloat("99999999999"), BigFloat("0"), true)
     )
 );
 
-class ArraysLeftSubTests : public ::testing::TestWithParam<std::tuple<
-    std::vector<int>,
-    std::vector<int>,
-    std::vector<int>,
-    int
->> {};
+class GetNumTests : public ::testing::TestWithParam<std::tuple<
+    BigFloat,
+    BigFloat,
+    std::vector<int>
+>> {
+};
 
-TEST_P(ArraysLeftSubTests, LeftSubTest) {
-    std::vector<int> a = std::get<0>(GetParam());
-    std::vector<int> b = std::get<1>(GetParam());
-    std::vector<int> expected = std::get<2>(GetParam());
-    int expected_additive = std::get<3>(GetParam());
-    std::vector<int> sub;
-    int additive = BigFloat::sub_arrays_left(a.begin(), a.end(), b.begin(), b.end(), sub);
+TEST_P(GetNumTests, Default) {
+    BigFloat num(std::get<0>(GetParam()));
+    BigFloat num_to(std::get<1>(GetParam()));
+    std::vector<int> expected = (std::get<2>(GetParam()));
+    std::vector<int> real(num_to.number.size());
+    for (int i = 0; i < num_to.number.size(); ++i) {
+        real[i] = num.get_num(i, num_to);
+    }
 
+    EXPECT_EQ(real, expected);
 
-    EXPECT_EQ(additive, expected_additive) << "incorrect additive " << additive << " correct is " << expected_additive;
-    EXPECT_EQ(sub, expected);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     Default,
-    ArraysLeftSubTests,
+    GetNumTests,
     ::testing::Values(
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2},
-            std::vector<int>{0, 0, 3, 4},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{9, 9, 6, 6},
-            -1
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{0, 0, 0, 0},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{0, 0, 0, 0, 0},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{9, 9, 9, 9, 9},
-            std::vector<int>{9, 9, 9, 9, 9},
-            std::vector<int>{9, 9, 9, 9, 8},
-            1
-        ),
-        std::make_tuple(
-            std::vector<int>{5},
-            std::vector<int>{5},
-            std::vector<int>{0},
-            1
-        )
+        std::make_tuple(BigFloat("0.12"), BigFloat("12345.678"), std::vector<int>({0, 0, 0, 0, 0, 1, 2, 0})),
+        std::make_tuple(BigFloat("0.123"), BigFloat("12345.678"), std::vector<int>({0, 0, 0, 0, 0, 1, 2, 3})),
+        std::make_tuple(BigFloat("1"), BigFloat("12345.678"), std::vector<int>({0, 0, 0, 0, 1, 0, 0, 0})),
+        std::make_tuple(BigFloat("12345"), BigFloat("12345.678"), std::vector<int>({1, 2, 3, 4, 5, 0, 0, 0}))
     )
 );
 
-class ArraysRightSubTests : public ::testing::TestWithParam<std::tuple<
-    std::vector<int>,
-    std::vector<int>,
-    std::vector<int>,
-    int
->> {};
 
-TEST_P(ArraysRightSubTests, RightSubTest) {
-    std::vector<int> a = std::get<0>(GetParam());
-    std::vector<int> b = std::get<1>(GetParam());
-    std::vector<int> expected = std::get<2>(GetParam());
-    int expected_additive = std::get<3>(GetParam());
-    std::vector<int> sub;
-    int additive = BigFloat::sub_arrays_left(a.begin(), a.end(), b.begin(), b.end(), sub);
-
-
-    EXPECT_EQ(additive, expected_additive) << "incorrect additive " << additive << " correct is " << expected_additive;
-    EXPECT_EQ(sub, expected);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    Default,
-    ArraysRightSubTests,
-    ::testing::Values(
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2},
-            std::vector<int>{1, 2, 2, 2},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2, 2, 2},
-            -1
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{1, 2, 3, 4},
-            std::vector<int>{0},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{1, 2, 3, 4, 5},
-            std::vector<int>{0, 0, 0, 0, 0},
-            0
-        ),
-        std::make_tuple(
-            std::vector<int>{9, 9, 9, 9, 9},
-            std::vector<int>{9, 9, 9, 9, 9},
-            std::vector<int>{9, 9, 9, 9, 8},
-            1
-        ),
-        std::make_tuple(
-            std::vector<int>{5},
-            std::vector<int>{5},
-            std::vector<int>{0},
-            1
-        )
-    )
-);
 

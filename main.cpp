@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << -13 / 10;
+    std::cout << 123;
     return 0;
 }
