@@ -23,7 +23,7 @@ jobs:
             cpp_compiler: g++
             build_type: Debug
           - os: ubuntu-latest
-            cpp_compiler: clang++
+            cpp_compiler: g++
             build_type: Debug
 
     steps:
