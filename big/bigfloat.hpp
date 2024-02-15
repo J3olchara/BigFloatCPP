@@ -15,12 +15,12 @@ public:
     static int sum_arrays_left(
         std::vector<int>::iterator, std::vector<int>::iterator,
         std::vector<int>::iterator, std::vector<int>::iterator,
-        std::vector<int>&, int = 0, bool = true
+        std::vector<int>&, int = 0, bool=true, bool = true
     );
     static int sum_arrays_right(
         std::vector<int>::iterator, std::vector<int>::iterator,
         std::vector<int>::iterator, std::vector<int>::iterator,
-        std::vector<int>&, int = 0, bool = false
+        std::vector<int>&, int = 0, bool = true
     );
     static int sub_arrays_left(
         std::vector<int>::iterator, std::vector<int>::iterator,
