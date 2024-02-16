@@ -158,8 +158,6 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
-
-
 class GtTests : public ::testing::TestWithParam<std::tuple<
     BigFloat,
     BigFloat,
