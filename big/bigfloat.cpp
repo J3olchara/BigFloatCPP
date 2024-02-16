@@ -2,6 +2,7 @@
 #include "bigfloat.hpp"
 #include <iterator>
 #include <sstream>
+#include <algorithm>
 #include <unordered_map>
 
 
