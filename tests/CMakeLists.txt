@@ -8,6 +8,8 @@ get_filename_component(Parent ${CMAKE_CURRENT_SOURCE_DIR} DIRECTORY)
 enable_testing()
 
 
+
+
 include(FetchContent)
 FetchContent_Declare(
         googletest
@@ -18,6 +20,9 @@ FetchContent_MakeAvailable(googletest)
 
 set(Sources
     test.cpp
+    arithmetics.cpp
+    compares.cpp
+    constructors.cpp
 )
 
 add_executable(${This}
