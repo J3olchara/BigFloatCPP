@@ -7,9 +7,12 @@ set(This big)
 
 set(Sources
     bigfloat.cpp
+    arithmetics.cpp
+
 )
 set(Headers
     bigfloat.hpp
+    arithmetics.hpp
 )
 
 add_library(${This} SHARED
