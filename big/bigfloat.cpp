@@ -10,16 +10,11 @@
 int BigFloat::get_index(int index, BigFloat& to_num) {
     int rps1 = this->raw_real_part_size();
     int rps2 = to_num.raw_real_part_size();
-    std::cout << rps1 << ' ' << rps2 << std::endl;
     if (rps1 > 0 and rps2 > 0 and rps1 >= rps2) return index;
     if (rps1 > 0 and rps2 > 0 and rps1 < rps2) return index + (rps1 - rps2);
     if (rps1 <= 0 and rps2 > 0) return index + (rps1 - rps2);
     if (rps1 > 0 and rps2 <= 0) return index;
     if (rps1 <= 0 and rps2 <= 0) return index + rps1 - 1;
-}
-
-int BigFloat::raw_real_part_size() {
-    return static_cast<int>(this->number.size()) - static_cast<int>(this->power);
 }
 
 BigFloat BigFloat::strip_right_zeros() {
@@ -29,16 +24,6 @@ BigFloat BigFloat::strip_right_zeros() {
         this->power--;
     }
     return *this;
-}
-
-int BigFloat::get_index(int index, BigFloat& to_num) {
-    int rps1 = this->raw_real_part_size();
-    int rps2 = to_num.raw_real_part_size();
-    if (rps1 > 0 and rps2 > 0 and rps1 >= rps2) return index;
-    if (rps1 > 0 and rps2 > 0 and rps1 < rps2) return index + (rps1 - rps2);
-    if (rps1 <= 0 and rps2 > 0) return index + (rps1 - rps2);
-    if (rps1 > 0 and rps2 <= 0) return index;
-    if (rps1 <= 0 and rps2 <= 0) return index + rps1 - 1;
 }
 
 int BigFloat::raw_real_part_size() {
