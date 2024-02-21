@@ -2,11 +2,8 @@
 #include <big/bigfloat.hpp>
 
 
-void *$(){[&](...){$:[](){({$:;_:[](){},""[+-(&&$<&&_)];});}();}([=](){});}
-
 int main() {
-    BigFloat a(1);
-    BigFloat b(3);
-    std::cout << a / b;
+    BigFloat pi = BigFloat::get_pi(10);
+    std::cout << pi << std::endl;
     return 0;
 }

@@ -7,6 +7,15 @@
 #include <unordered_map>
 #include <utility>
 
+int BigFloat::get_index(int index, BigFloat& to_num) {
+    int rps1 = this->raw_real_part_size();
+    int rps2 = to_num.raw_real_part_size();
+    if (rps1 > 0 and rps2 > 0 and rps1 >= rps2) return index;
+    if (rps1 > 0 and rps2 > 0 and rps1 < rps2) return index + (rps1 - rps2);
+    if (rps1 <= 0 and rps2 > 0) return index + (rps1 - rps2);
+    if (rps1 > 0 and rps2 <= 0) return index;
+    if (rps1 <= 0 and rps2 <= 0) return index + rps1 - 1;
+}
 
 BigFloat BigFloat::strip_right_zeros() {
     int rps = this->real_part_size();
@@ -17,21 +26,9 @@ BigFloat BigFloat::strip_right_zeros() {
     return *this;
 }
 
-int BigFloat::get_index(int index, BigFloat& to_num) {
-    int rps1 = this->raw_real_part_size();
-    int rps2 = to_num.raw_real_part_size();
-    std::cout << rps1 << ' ' << rps2 << std::endl;
-    if (rps1 > 0 and rps2 > 0 and rps1 >= rps2) return index;
-    if (rps1 > 0 and rps2 > 0 and rps1 < rps2) return index + (rps1 - rps2);
-    if (rps1 <= 0 and rps2 > 0) return index + (rps1 - rps2);
-    if (rps1 > 0 and rps2 <= 0) return index;
-    if (rps1 <= 0 and rps2 <= 0) return index + rps1 - 1;
-}
-
 int BigFloat::raw_real_part_size() {
     return static_cast<int>(this->number.size()) - static_cast<int>(this->power);
 }
-
 int BigFloat::real_part_size() {
     int n = this->raw_real_part_size();
     if (n <= 0) return 1;
@@ -55,18 +52,16 @@ std::string BigFloat::str()  {
     answer.reserve(this->number.size() + 1 + this->minus);
     if (this->minus) answer.push_back('-');
     int i = 0;
-    while (i < this->raw_real_part_size()) {
-        answer.push_back(this->number[i] + '0');
-        i++;
-    }
+
+    // real part
+    for (;i < this->raw_real_part_size(); ++i) answer.push_back(this->number[i] + '0');
     if (this->raw_real_part_size() <= 0) answer.push_back('0');
 
     answer.push_back('.');
+
+    // float part
     for (int j = 0; this->number.size() + j < this->power; ++j) answer.push_back('0');
-    while (i < this->number.size()) {
-        answer.push_back(this->number[i] + '0');
-        i++;
-    }
+    for (;i < this->number.size(); ++i) answer.push_back(this->number[i] + '0');
     if (this->power == 0) answer.push_back('0');
     return answer;
 }
@@ -158,19 +153,69 @@ BigFloat operator+(BigFloat a, BigFloat& b) {
     return add(std::move(a), b);
 }
 
+BigFloat operator+(BigFloat a, BigFloat&& b) {
+    return add(std::move(a), b);
+}
+
+BigFloat operator+(BigFloat a, int b) {
+    BigFloat b2(b);
+    BigFloat ans = add(std::move(a), b2);
+    return ans;
+}
+
 BigFloat operator-(BigFloat a, BigFloat& b) {
     return sub(std::move(a), b);
+}
+
+BigFloat operator-(BigFloat a, BigFloat&& b) {
+    return sub(std::move(a), b);
+}
+
+BigFloat operator-(BigFloat a, int b) {
+    BigFloat b2(b);
+    BigFloat ans = sub(std::move(a), b2);
+    return ans;
 }
 
 BigFloat operator*(BigFloat a, BigFloat& b) {
     return mul(std::move(a), b);
 }
 
+BigFloat operator*(BigFloat a, BigFloat&& b) {
+    return mul(std::move(a), b);
+}
+
+BigFloat operator*(BigFloat a, int b) {
+    BigFloat b2(b);
+    BigFloat ans = mul(std::move(a), b2);
+    return ans;
+}
+
 BigFloat operator/(BigFloat a, BigFloat& b) {
-    return div(a, b);
+    return div(std::move(a), b);
+}
+
+BigFloat operator/(BigFloat a, BigFloat&& b) {
+    return div(std::move(a), b);
+}
+
+BigFloat operator/(BigFloat a, int b) {
+    BigFloat b2(b);
+    BigFloat ans = div(std::move(a), b2);
+    return ans;
 }
 
 BigFloat& BigFloat::operator+=(BigFloat& b) {
+    *this = *this + b;
+    return *this;
+}
+
+BigFloat& BigFloat::operator+=(BigFloat&& b) {
+    *this = *this + b;
+    return *this;
+}
+
+BigFloat& BigFloat::operator+=(int b) {
     *this = *this + b;
     return *this;
 }
@@ -180,12 +225,42 @@ BigFloat& BigFloat::operator-=(BigFloat& b) {
     return *this;
 }
 
+BigFloat& BigFloat::operator-=(BigFloat&& b) {
+    *this = *this - b;
+    return *this;
+}
+
+BigFloat& BigFloat::operator-=(int b) {
+    *this = *this - b;
+    return *this;
+}
+
 BigFloat& BigFloat::operator*=(BigFloat& b) {
     *this = *this * b;
     return *this;
 }
 
+BigFloat& BigFloat::operator*=(BigFloat&& b) {
+    *this = *this * b;
+    return *this;
+}
+
+BigFloat& BigFloat::operator*=(int b) {
+    *this = *this * b;
+    return *this;
+}
+
 BigFloat& BigFloat::operator/=(BigFloat& b) {
+    *this = *this / b;
+    return *this;
+}
+
+BigFloat& BigFloat::operator/=(BigFloat&& b) {
+    *this = *this / b;
+    return *this;
+}
+
+BigFloat& BigFloat::operator/=(int b) {
     *this = *this / b;
     return *this;
 }
