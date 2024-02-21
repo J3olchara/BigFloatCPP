@@ -16,26 +16,21 @@ BigFloat add(BigFloat a, BigFloat& b) {
     // then *this + b and *this > b
 
     std::deque<int> new_num;
-    int additive = 0;
-    int right_zero_counter = 0;
     int max_rps = static_cast<int>(std::max(a.real_part_size(), b.real_part_size()));
     int max_power = static_cast<int>(std::max(a.power, b.power));
-    int max_size = max_rps + max_power;
+    int additive = 0, max_size = max_rps + max_power;
     for (int i = max_size - 1; i >= 0; --i) {
         int n1 = a.get_num(i, b);
         int n2 = b.get_num(i, a);
         int sum = n1 + n2 + additive;
-        if (!n1 and !n2 and i >= max_rps) right_zero_counter++;
-        else if (!n1 and !n2 and i < max_rps) right_zero_counter = 0;
         additive = sum / 10;
         new_num.push_front(sum % 10);
     }
     if (additive != 0) new_num.push_front(additive);
-    for (int i = 0; i < right_zero_counter; ++i) new_num.pop_back();
 
     a.number = new_num;
     a.power = std::max(a.power, b.power);
-    return a;
+    return BigFloat(a.str());
 }
 
 BigFloat sub(BigFloat a, BigFloat& b) {
@@ -62,8 +57,6 @@ BigFloat sub(BigFloat a, BigFloat& b) {
         new_num.push_front(((sum % 10) + 10) % 10);
     }
     if (additive != 0) new_num.push_front(((additive % 10) + 10) % 10);
-    for (int i = 0; i < right_zero_counter; ++i) new_num.pop_back();
-
     a.number = new_num;
     a.power = std::max(a.power, b.power);
     return BigFloat(a.str());
@@ -93,8 +86,6 @@ BigFloat mul(BigFloat a, BigFloat& b) {
         }
         int idx = a.real_part_size() - i - 1;
         sum.mul10(idx);
-        std::cout << sum << ' ' << tmp << ' ' << a.real_part_size() - i - 1 << std::endl;
-
         ans += sum;
     }
     ans.minus = a.minus ^ b.minus;
@@ -121,17 +112,33 @@ BigFloat div(BigFloat a, BigFloat& b) {
         }
     }
     for (int i = 0; q.power < Precision and a; ++i) {
-//        std::cout << a << '\t' << tmp << '\t' << q << '\t' << k << std::endl;
         while (a >= tmp) {
-//            std::cout << a << '\t' << tmp << '\t';
             a -= tmp;
             q += k;
-//            std::cout << k << ' ' << q << std::endl;
-//            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
-//        std::cout << std::endl;
         k.mul10(-1);
         tmp.mul10(-1);
     }
     return q;
+}
+
+BigFloat BigFloat::get_pi(int precision) {
+    BigFloat pi;
+    BigFloat under(1);
+    for (int i = 0; i < precision; ++i) {
+        BigFloat k1(i);
+        BigFloat right;
+        BigFloat k2(4);
+        right += k2 / (k1 * 8 + 1);
+        k2 /= 2;
+        right -= k2 / (k1 * 8 + 4);
+        k2 /= 2;
+        right -= k2 / (k1 * 8 + 5);
+        right -= k2 / (k1 * 8 + 6);
+        BigFloat tmp = k2 / under * right;
+        pi += tmp;
+        under *= 16;
+    }
+
+    return pi;
 }

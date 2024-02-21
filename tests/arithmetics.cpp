@@ -113,6 +113,7 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(
         std::make_tuple("0", "0", "0"),
         std::make_tuple("999999999999", "0", "0"),
+        std::make_tuple("1.0", "4.0", "4.0"),
         std::make_tuple("1000", "1000", "1000000"),
         std::make_tuple("100.12345", "100.12345", "10024.7052399025"),
         std::make_tuple("100.12", "100.1", "10022.012"),
@@ -153,7 +154,8 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple("10024.7052399025", "100.12345", "100.12345"),
         std::make_tuple("10022.012","100.12", "100.1"),
         std::make_tuple("12345", "0.12345", "100000"),
-        std::make_tuple("123450", "0.12345", "1000000")
+        std::make_tuple("123450", "0.12345", "1000000"),
+        std::make_tuple("1", "1", "1")
 
     )
 );

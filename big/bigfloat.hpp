@@ -26,11 +26,27 @@ public:
     friend BigFloat operator-(BigFloat a, BigFloat& b);
     friend BigFloat operator*(BigFloat a, BigFloat& b);
     friend BigFloat operator/(BigFloat a, BigFloat& b);
+    friend BigFloat operator+(BigFloat a, BigFloat&& b);
+    friend BigFloat operator-(BigFloat a, BigFloat&& b);
+    friend BigFloat operator*(BigFloat a, BigFloat&& b);
+    friend BigFloat operator/(BigFloat a, BigFloat&& b);
+    friend BigFloat operator+(BigFloat a, int b);
+    friend BigFloat operator-(BigFloat a, int b);
+    friend BigFloat operator*(BigFloat a, int b);
+    friend BigFloat operator/(BigFloat a, int b);
 
     BigFloat& operator+=(BigFloat& b);
     BigFloat& operator-=(BigFloat& b);
     BigFloat& operator*=(BigFloat& b);
     BigFloat& operator/=(BigFloat& b);
+    BigFloat& operator+=(BigFloat&& b);
+    BigFloat& operator-=(BigFloat&& b);
+    BigFloat& operator*=(BigFloat&& b);
+    BigFloat& operator/=(BigFloat&& b);
+    BigFloat& operator+=(int b);
+    BigFloat& operator-=(int b);
+    BigFloat& operator*=(int b);
+    BigFloat& operator/=(int b);
 
     bool operator<(BigFloat&);
     bool operator<=(BigFloat&);
@@ -50,6 +66,7 @@ public:
     int raw_real_part_size();
     BigFloat mul10(int n);
     BigFloat strip_right_zeros();
+    static BigFloat get_pi(int precision);
 };
 
 
