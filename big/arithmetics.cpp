@@ -138,6 +138,7 @@ BigFloat BigFloat::get_pi(int precision) {
         BigFloat tmp = k2 / under * right;
         pi += tmp;
         under *= 16;
+        if (abs(right.raw_real_part_size()) > precision) break;
     }
 
     return pi;
