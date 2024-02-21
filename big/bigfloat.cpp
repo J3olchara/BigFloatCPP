@@ -7,6 +7,20 @@
 #include <unordered_map>
 #include <utility>
 
+int BigFloat::get_index(int index, BigFloat& to_num) {
+    int rps1 = this->raw_real_part_size();
+    int rps2 = to_num.raw_real_part_size();
+    std::cout << rps1 << ' ' << rps2 << std::endl;
+    if (rps1 > 0 and rps2 > 0 and rps1 >= rps2) return index;
+    if (rps1 > 0 and rps2 > 0 and rps1 < rps2) return index + (rps1 - rps2);
+    if (rps1 <= 0 and rps2 > 0) return index + (rps1 - rps2);
+    if (rps1 > 0 and rps2 <= 0) return index;
+    if (rps1 <= 0 and rps2 <= 0) return index + rps1 - 1;
+}
+
+int BigFloat::raw_real_part_size() {
+    return static_cast<int>(this->number.size()) - static_cast<int>(this->power);
+}
 
 BigFloat BigFloat::strip_right_zeros() {
     int rps = this->real_part_size();
@@ -30,7 +44,6 @@ int BigFloat::get_index(int index, BigFloat& to_num) {
 int BigFloat::raw_real_part_size() {
     return static_cast<int>(this->number.size()) - static_cast<int>(this->power);
 }
-
 int BigFloat::real_part_size() {
     int n = this->raw_real_part_size();
     if (n <= 0) return 1;
@@ -149,6 +162,7 @@ BigFloat BigFloat::operator-() {
 BigFloat BigFloat::operator+() {
     return *this;
 }
+
 
 BigFloat operator+(BigFloat a, BigFloat& b) {
     return add(std::move(a), b);

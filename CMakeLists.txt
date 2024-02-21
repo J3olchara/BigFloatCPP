@@ -5,8 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(This Project)
 
-set(BUILD_GMOCK "Add GMock for testing" OFF)
-set(DOWNLOAD_EXTRACT_TIMESTAMP true)
+option(BUILD_GMOCK "Add GMock for testing" OFF)
 
 set(Sources
     main.cpp
