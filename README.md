@@ -6,7 +6,6 @@ that creates long arithmetic in C++.
 
 - Tests are included in repository main cmakelists
 
-- If you want to compute something, refactor main.cpp file
 
 > - To build the project you need to clone repo
 > - `git clone https://github.com/J3olchara/BigFloatCPP`
