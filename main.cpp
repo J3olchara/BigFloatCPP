@@ -5,7 +5,7 @@
 void *$(){[&](...){$:[](){({$:;_:[](){},""[+-(&&$<&&_)];});}();}([=](){});}
 
 int main() {
-    BigFloat pi = BigFloat::get_pi(200);
+    BigFloat pi = BigFloat::get_pi(10);
     std::cout << pi << std::endl;
     return 0;
 }
