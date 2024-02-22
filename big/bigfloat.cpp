@@ -1,4 +1,3 @@
-#include "arithmetics.hpp"
 #include "bigfloat.hpp"
 #include <string>
 #include <iterator>
@@ -106,16 +105,10 @@ BigFloat::BigFloat(std::string number) {
     this->minus = false;
 
     int i = 0;
-    if (number[i] == '-') {
-        this->minus = true;
-        i++;
-    }
+    for (;number[i] == '-';i++) this->minus = true;
     while (i < size && number[i] == '0') i++;
     // pushing real part
-    while (i < size && number[i] != '.') {
-        this->number.push_back(number[i] - '0');
-        i++;
-    }
+    for (; i < size && number[i] != '.'; i++) this->number.push_back(number[i] - '0');
     if (number[i] == '.') i++;
     else return;
     // pushing float part
@@ -135,9 +128,7 @@ BigFloat::BigFloat(std::string number) {
         i++;
     }
     this->power -= right_zeros;
-    for (int i = 0; i < right_zeros; ++i) {
-        this->number.erase(this->number.end() - 1);
-    }
+    for (int j = 0; j < right_zeros; ++j) this->number.erase(this->number.end() - 1);
     if (this->number.empty() and this->minus) {this->minus = false;}
 }
 
@@ -323,4 +314,32 @@ const BigFloat operator ""_bf(const long double a) {
 }
 const BigFloat operator ""_bf(unsigned long long a) {
     return BigFloat(std::to_string(a));
+}
+
+int BigFloat::get_precision() {
+    return this->precision;
+}
+
+std::deque<int> BigFloat::get_number() {
+    return this->number;
+}
+
+bool BigFloat::is_minus() {
+    return this->minus;
+}
+
+std::size_t BigFloat::exp() {
+    return this->power;
+}
+void BigFloat::set_precision(int new_precision) {
+    this->precision = new_precision;
+}
+void BigFloat::set_number(std::deque<int> new_number) {
+    this->number = new_number;
+}
+void BigFloat::set_minus(bool new_minus) {
+    this->minus = new_minus;
+}
+void BigFloat::set_exp(int new_exp) {
+    this->power = new_exp;
 }

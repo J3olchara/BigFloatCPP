@@ -13,7 +13,7 @@ class BigFloatConstructorsTests : public ::testing::TestWithParam<std::tuple<
 
 TEST(BigFloatConstructorsTests, ZeroTest) {
     BigFloat num;
-    ASSERT_EQ(num.number, std::deque<int>());
+    ASSERT_EQ(num.get_number(), std::deque<int>());
 }
 
 TEST_P(BigFloatConstructorsTests, TestConstructorString) {
@@ -23,20 +23,18 @@ TEST_P(BigFloatConstructorsTests, TestConstructorString) {
     size_t exp_power = std::get<2>(GetParam());
     bool exp_minus = std::get<3>(GetParam());
 
-    std::stringstream num;
-    std::copy(real.number.begin(), real.number.end(), std::ostream_iterator<int>(num, ""));
     std::stringstream bad_message;
     bad_message << "Number " << number << " converted incorrectly: (raw_number) "
-                << real.raw_number() << " correct is " << num.str() << std::endl;
-    EXPECT_EQ(real.number, exp_number) << bad_message.str();
+                << real.raw_number() << " correct is " << real.raw_number() << std::endl;
+    EXPECT_EQ(real.get_number(), exp_number) << bad_message.str();
     bad_message.str("");
     bad_message << "Number " << number << " converted incorrectly: (power) "
-                << real.power << " correct is " << exp_power << std::endl;
-    EXPECT_EQ(real.power, exp_power) << bad_message.str();
+                << real.exp() << " correct is " << exp_power << std::endl;
+    EXPECT_EQ(real.exp(), exp_power) << bad_message.str();
     bad_message.str("");
     bad_message << "Number " << number << " converted incorrectly: (minus) "
-                << real.minus << " correct is " << exp_minus << std::endl;
-    EXPECT_EQ(real.minus, exp_minus) << bad_message.str();
+                << real.is_minus() << " correct is " << exp_minus << std::endl;
+    EXPECT_EQ(real.is_minus(), exp_minus) << bad_message.str();
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -61,3 +59,8 @@ INSTANTIATE_TEST_SUITE_P(
         std::make_tuple("-0.0", std::deque<int>{}, 0ul, false)
     )
 );
+
+
+class tes : public::testing::Test {
+
+};

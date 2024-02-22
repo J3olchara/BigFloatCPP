@@ -12,7 +12,6 @@ set(Sources
 )
 set(Headers
     bigfloat.hpp
-    arithmetics.hpp
 )
 
 add_library(${This} SHARED

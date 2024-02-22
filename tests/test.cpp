@@ -15,7 +15,7 @@ TEST_P(GetNumTests, Default) {
     std::vector<int> expected = (std::get<2>(GetParam()));
     size_t rps1 = num.real_part_size() < 1 ? 1 : num.real_part_size();
     size_t rps2 = num_to.real_part_size() < 1 ? 1 : num_to.real_part_size();
-    size_t nums_size = std::max(rps1, rps2) + std::max(num_to.power, num.power);
+    size_t nums_size = std::max(rps1, rps2) + std::max(num_to.exp(), num.exp());
     std::vector<int> real(nums_size);
     for (int i = 0; i < nums_size; ++i) {
         real[i] = num.get_num(i, num_to);

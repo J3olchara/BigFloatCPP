@@ -1,7 +1,5 @@
-#include "arithmetics.hpp"
 #include "bigfloat.hpp"
 #include <chrono>
-#include <thread>
 
 const static int Precision = 100;
 
@@ -138,7 +136,7 @@ BigFloat BigFloat::get_pi(int precision) {
         tmp = k2 / under * right;
         pi += tmp;
         under *= 16;
-        if (abs(right.raw_real_part_size()) > precision) break;
+        if (abs(right.raw_real_part_size()) + 1 > precision) break;
     }
 
     pi.precision = precision;
