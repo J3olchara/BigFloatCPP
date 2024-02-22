@@ -60,8 +60,15 @@ std::string BigFloat::str()  {
     answer.push_back('.');
 
     // float part
-    for (int j = 0; this->number.size() + j < this->power; ++j) answer.push_back('0');
-    for (;i < this->number.size(); ++i) answer.push_back(this->number[i] + '0');
+    if (this->precision == -1) {
+        for (int j = 0; this->number.size() + j < this->power; ++j) answer.push_back('0');
+        for (; i < this->number.size(); ++i) answer.push_back(this->number[i] + '0');
+    }
+    else {
+        int cnt = 0;
+        for (; this->number.size() + cnt < this->power and cnt < this->precision; ++cnt) answer.push_back('0');
+        for (; i < this->number.size() and cnt < this->precision; ++i, ++cnt) answer.push_back(this->number[i] + '0');
+    }
     if (this->power == 0) answer.push_back('0');
     return answer;
 }

@@ -13,6 +13,7 @@ class BigFloat {
 public:
     std::size_t power;
     std::deque<int> number;
+    int precision = -1;
     bool minus;
 
     BigFloat();
