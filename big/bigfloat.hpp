@@ -69,6 +69,8 @@ public:
     static BigFloat get_pi(int precision);
 };
 
-
+const BigFloat operator ""_bf(const char* bf, size_t size);
+const BigFloat operator ""_bf(const long double a);
+const BigFloat operator ""_bf(unsigned long long a);
 
 #endif // PROJECTCPP_BIGFLOAT_HPP

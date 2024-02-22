@@ -307,3 +307,13 @@ BigFloat::operator bool() const {
 std::ostream& operator<<(std::ostream& os, BigFloat& num) {
     return os << num.str();
 }
+
+const BigFloat operator ""_bf(const char* bf, size_t size) {
+    return BigFloat(std::string(bf, size));
+}
+const BigFloat operator ""_bf(const long double a) {
+    return BigFloat(std::to_string(a));
+}
+const BigFloat operator ""_bf(unsigned long long a) {
+    return BigFloat(std::to_string(a));
+}
