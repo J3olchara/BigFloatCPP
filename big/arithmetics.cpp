@@ -123,9 +123,9 @@ BigFloat div(BigFloat a, BigFloat& b) {
 }
 
 BigFloat BigFloat::get_pi(int precision) {
-    BigFloat pi;
-    BigFloat under(1);
-    for (int i = 0; i < precision; ++i) {
+    BigFloat pi, under(1), tmp(1), min(1);
+    min.power = precision + 1;
+    for (int i = 0; tmp > min; ++i) {
         BigFloat k1(i);
         BigFloat right;
         BigFloat k2(4);
@@ -135,11 +135,12 @@ BigFloat BigFloat::get_pi(int precision) {
         k2 /= 2;
         right -= k2 / (k1 * 8 + 5);
         right -= k2 / (k1 * 8 + 6);
-        BigFloat tmp = k2 / under * right;
+        tmp = k2 / under * right;
         pi += tmp;
         under *= 16;
         if (abs(right.raw_real_part_size()) > precision) break;
     }
 
+    pi.precision = precision;
     return pi;
 }

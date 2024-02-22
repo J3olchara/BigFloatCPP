@@ -13,6 +13,7 @@ class BigFloat {
 public:
     std::size_t power;
     std::deque<int> number;
+    int precision = -1;
     bool minus;
 
     BigFloat();
@@ -69,6 +70,8 @@ public:
     static BigFloat get_pi(int precision);
 };
 
-
+const BigFloat operator ""_bf(const char* bf, size_t size);
+const BigFloat operator ""_bf(const long double a);
+const BigFloat operator ""_bf(unsigned long long a);
 
 #endif // PROJECTCPP_BIGFLOAT_HPP
