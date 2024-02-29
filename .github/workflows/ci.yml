@@ -42,7 +42,6 @@ jobs:
         -G Ninja
         -S ${{ github.workspace }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         --config ${{ matrix.build_type }}
         .
 
