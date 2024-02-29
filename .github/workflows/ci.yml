@@ -43,7 +43,6 @@ jobs:
         -S ${{ github.workspace }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         --config ${{ matrix.build_type }}
-        .
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}/tests
