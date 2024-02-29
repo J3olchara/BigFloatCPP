@@ -43,9 +43,8 @@ jobs:
         -S ${{ github.workspace }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        ${{ github.workspace }}
-         && 
-        cmake --build ${{ steps.strings.outputs.build-output-dir }}
+        ${{ github.workspace }};
+        cmake --build ${{ steps.strings.outputs.build-output-dir }};
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}/tests
